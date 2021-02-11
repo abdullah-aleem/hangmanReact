@@ -1,8 +1,9 @@
 import React from 'react'
 
-const Notification = () => {
+const Notification = ({showNotification}) => {
+  console.log('notication AND SHOULD I SHOW', showNotification)
     return (
-        <div class="notification-container" id="notification-container">
+        <div className={`notification-container ${showNotification?'show':''}`} >
         <p>You have already entered this letter</p>
       </div>
     )

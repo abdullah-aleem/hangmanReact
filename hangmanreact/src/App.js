@@ -4,7 +4,8 @@ import Figure from './pages/Figure'
 import WrongWords from './pages/Wrongwords';
 import Word from './pages/Word';
 import React, { useState, useEffect } from 'react';
-
+import { showNotification as show } from './helpers/helperNotify';
+import Notification from "./pages/Notification"
 //the list of the words that can be placed in the hangman
 const words = ['application', 'programming', 'interface', 'wizard'];
 
@@ -24,7 +25,8 @@ function App() {
    //the letters that donot match the the correct word
    const [wrongLetters, setWrongLetters] = useState([]);
 
-
+   //the state for showing the notification that you have already entered the letter
+   const [showNotification, setNotification] = useState(false);
 
 
 
@@ -41,15 +43,30 @@ function App() {
 
                if (selectedWord.includes(letter)) {
                   if (!correctLetters.includes(letter)) {
-                     setCorrectLetters(current=>[...current,letter])
+                     setCorrectLetters(current => [...current, letter])
+                     console.log('length of word', selectedWord.length);
+                     console.log('length of word', correctLetters);
+                     let temWord = Array.from(new Set([...selectedWord]))
+                     console.log(temWord);
+                     if (temWord.length == (correctLetters.length + 1)) {
+                        setPlayable(false)
+                        console.log('you win');
+                     }
 
                   } else {
+                     //already entered
+                     show(setNotification);
                   }
                } else {
                   if (!wrongLetters.includes(letter)) {
-                     setWrongLetters(current=>[...current,letter])
-
+                     setWrongLetters(current => [...current, letter])
+                     if ((wrongLetters.length + 1) == 6) {
+                        setPlayable(false);
+                        console.log("youlost")
+                     }
                   } else {
+                     //already entered
+                     show(setNotification);
                   }
                }
             }
@@ -61,14 +78,14 @@ function App() {
       //this adds the event listener to the window and it calls the function handle keystroke 
       window.addEventListener('keydown', handleKeyStroke);
 
-   
-   
+
+
       //now the problem is that we only want one event listener at a time so we remove the other by removing them in the end
-       return ()=>window.removeEventListener('keydown', handleKeyStroke)
-   
-   
-   
-   },[correctLetters,playable,wrongLetters])
+      return () => window.removeEventListener('keydown', handleKeyStroke)
+
+
+
+   }, [correctLetters, playable, wrongLetters])
 
 
 
@@ -80,10 +97,11 @@ function App() {
       <div>
          <Header />
          <div className="game-container">
-            <Figure />
+            <Figure wrongLetters={wrongLetters} />
             <WrongWords wrongWords={wrongLetters} />
             <Word selectedword={selectedWord} correctLetters={correctLetters} />
          </div>
+         <Notification showNotification={showNotification} />
       </div>
    );
 }

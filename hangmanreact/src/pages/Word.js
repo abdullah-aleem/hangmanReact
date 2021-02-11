@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Word = ({selectedword,correctLetters}) => {
-    //              ---------Working-------------
+    //          ------------Working-------------
     //the component gets the correctedletters and the word 
     //that is to be found the component compares them and 
     //finds if the letter is in the word then it displays it in correct words 
